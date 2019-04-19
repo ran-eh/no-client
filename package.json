@@ -32,10 +32,12 @@
         "xml-loader": "^1.2.1"
     },
     "dependencies": {
+        "await-mutex": "^1.0.2",
         "axios": "^0.18.0",
         "clean-webpack-plugin": "^2.0.1",
         "crel": "^4.0.1",
         "html-webpack-plugin": "^3.2.0",
+        "moment": "^2.24.0",
         "prosemirror-collab": "^1.1.1",
         "prosemirror-commands": "^1.0.7",
         "prosemirror-dev-tools": "^2.1.1",
