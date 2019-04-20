@@ -1,54 +1,55 @@
 {
-    "name": "bottomup",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "directories": {
-        "lib": "lib"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "webpack",
-        "start": "webpack-dev-server --open"
-    },
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "@babel/cli": "^7.4.3",
-        "@babel/core": "^7.4.3",
-        "@babel/preset-env": "^7.4.3",
-        "babel-core": "^6.26.3",
-        "babel-loader": "^8.0.5",
-        "babel-polyfill": "^6.26.0",
-        "babel-preset-es2015": "^6.24.1",
-        "babel-preset-stage-0": "^6.24.1",
-        "css-loader": "^2.1.1",
-        "csv-loader": "^3.0.2",
-        "prosemirror": "^0.11.1",
-        "style-loader": "^0.23.1",
-        "webpack": "^4.29.6",
-        "webpack-cli": "^3.3.0",
-        "webpack-dev-server": "^3.3.0",
-        "xml-loader": "^1.2.1"
-    },
-    "dependencies": {
-        "await-mutex": "^1.0.2",
-        "axios": "^0.18.0",
-        "clean-webpack-plugin": "^2.0.1",
-        "crel": "^4.0.1",
-        "html-webpack-plugin": "^3.2.0",
-        "moment": "^2.24.0",
-        "prosemirror-collab": "^1.1.1",
-        "prosemirror-commands": "^1.0.7",
-        "prosemirror-dev-tools": "^2.1.1",
-        "prosemirror-example-setup": "^1.0.1",
-        "prosemirror-history": "^1.0.4",
-        "prosemirror-keymap": "^1.0.1",
-        "prosemirror-markdown": "^1.3.0",
-        "prosemirror-schema-basic": "^1.0.0",
-        "prosemirror-state": "^1.2.2",
-        "prosemirror-view": "^1.8.6",
-        "react": "^16.8.6",
-        "react-dom": "^16.8.6"
-    }
+  "name": "bottomup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.5",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^2.1.1",
+    "csv-loader": "^3.0.2",
+    "prosemirror": "^0.11.1",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.3.0",
+    "webpack-merge": "^4.2.1",
+    "xml-loader": "^1.2.1"
+  },
+  "dependencies": {
+    "await-mutex": "^1.0.2",
+    "axios": "^0.18.0",
+    "clean-webpack-plugin": "^2.0.1",
+    "crel": "^4.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "moment": "^2.24.0",
+    "prosemirror-collab": "^1.1.1",
+    "prosemirror-commands": "^1.0.7",
+    "prosemirror-dev-tools": "^2.1.1",
+    "prosemirror-example-setup": "^1.0.1",
+    "prosemirror-history": "^1.0.4",
+    "prosemirror-keymap": "^1.0.1",
+    "prosemirror-markdown": "^1.3.0",
+    "prosemirror-schema-basic": "^1.0.0",
+    "prosemirror-state": "^1.2.2",
+    "prosemirror-view": "^1.8.6",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
 }

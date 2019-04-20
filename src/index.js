@@ -31,13 +31,15 @@ const mutex = new Mutex();
 let urlText;
 let clientIDText;
 let versionText;
+// const addr = 'ec2-3-19-32-250.us-east-2.compute.amazonaws.com:8000';
+const addr = 'localhost:8000';
 
 function createWebSocket(name) {
     console.log(`about to start ws for ${name}`);
     if (webSocket) {
         webSocket.close();
     }
-    webSocket = new WebSocket(`ws://localhost:8000/ws?name=${name}`);
+    webSocket = new WebSocket(`ws://${addr}/ws?name=${name}`);
     webSocket.onmessage = pull;
     webSocket.onclose = () => {
         if (fileName === name) {
@@ -47,7 +49,7 @@ function createWebSocket(name) {
 }
 
 async function newFile() {
-    const res = await axios.post(`http://localhost:8000/new`);
+    const res = await axios.post(`http://${addr}/new`);
     createWebSocket(res.data.fileName);
     if (view) {
         view.destroy()
@@ -138,7 +140,7 @@ async function push() {
         console.log({steps});
         console.log("sending...\n");
         try {
-            const res = await axios.post(`http://localhost:8000/update`, {fileName, ...steps});
+            const res = await axios.post(`http://${addr}/update`, {fileName, ...steps});
             console.log("...sent\n");
             console.log({res});
             if (res.data) {
@@ -157,7 +159,7 @@ async function pull() {
         view = await newView()
     }
     try {
-        const res = await axios.get(`http://localhost:8000/?name=${fileName}&version=${getVersion(view.state)}`);
+        const res = await axios.get(`http://${addr}/?name=${fileName}&version=${getVersion(view.state)}`);
         console.log({res});
         if (res.data) {
             applySteps(res.data)
