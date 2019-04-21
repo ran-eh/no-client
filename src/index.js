@@ -13,18 +13,13 @@ import {exampleSetup} from 'prosemirror-example-setup';
 import axios from 'axios';
 import 'prosemirror-example-setup/style/style.css';
 import Mutex from "await-mutex";
-
-function getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-        vars[key] = value;
-    });
-    return vars;
-}
+import Url from "url-parse"
 
 let plugins = exampleSetup({schema});
 let version = 0;
-let fileName = getUrlVars()["name"];
+let fileName = Url(window.location.href, null, true).query.name;
+const addr = `${Url(window.location.href, null, true).hostname}:8000`;
+console.log({fileName})
 let view = null;
 let webSocket = null;
 const mutex = new Mutex();
@@ -32,7 +27,6 @@ let urlText;
 let clientIDText;
 let versionText;
 // const addr = 'ec2-3-19-32-250.us-east-2.compute.amazonaws.com:8000';
-const addr = 'localhost:8000';
 
 function createWebSocket(name) {
     console.log(`about to start ws for ${name}`);
@@ -54,7 +48,7 @@ async function newFile() {
     if (view) {
         view.destroy()
     }
-    view = await newView()
+    view = await newView();
     updateDisplay(res.data.fileName);
 }
 
@@ -69,8 +63,8 @@ async function newView() {
     return new EditorView(document.body, {
         state,
         dispatchTransaction(transaction) {
-            let newState = view.state.apply(transaction)
-            view.updateState(newState)
+            let newState = view.state.apply(transaction);
+            view.updateState(newState);
             push()
         }
     });
@@ -133,8 +127,8 @@ function applySteps(data) {
 }
 
 async function push() {
-    const unlock = await mutex.lock()
-    console.log({state: view.state})
+    const unlock = await mutex.lock();
+    console.log({state: view.state});
     let steps;
     while ((steps = sendableSteps(view.state))) {
         console.log({steps});
@@ -153,9 +147,10 @@ async function push() {
 }
 
 async function pull() {
-    const unlock = await mutex.lock()
+    const unlock = await mutex.lock();
     if (!view) {
-        fileName = getUrlVars()["name"];
+        fileName = Url(window.location.href, null, true).query.name;
+        console.log({in: 'pull', fileName})
         view = await newView()
     }
     try {
@@ -177,5 +172,5 @@ async function init() {
         createWebSocket(fileName);
     }
 }
-init()
+init();
 
