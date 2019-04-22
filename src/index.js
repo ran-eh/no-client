@@ -111,7 +111,6 @@ function render() {
     document.body.appendChild(document.createTextNode('\u00A0\u00A0'))
     document.body.appendChild(versionLabel);
     document.body.appendChild(versionText);
-    document.body.appendChild(pushButton);
 }
 
 function updateDisplay(name) {
