@@ -39,14 +39,17 @@ function createWebSocket(name) {
 
 async function newFile() {
     const unlock = await mutex.lock();
+    const url = `http://${addr}/new`;
 
     const res = await axios.post(`http://${addr}/new`);
-    createWebSocket(res.data.fileName);
-    if (view) {
-        view.destroy()
+    if (res.status === 200) {
+        createWebSocket(res.data.fileName);
+        if (view) {
+            view.destroy()
+        }
+        view = await newView();
+        updateDisplay(res.data.fileName);
     }
-    view = await newView();
-    updateDisplay(res.data.fileName);
     unlock()
 
 }
@@ -69,7 +72,7 @@ async function newView() {
     });
 }
 
-function makeRo(id ) {
+function makeRo(id) {
     let f =
         document.createElement("input");
     f.setAttribute('id', id);
@@ -136,39 +139,43 @@ function applySteps(data) {
 }
 
 async function push() {
-    const unlock = await mutex.lock();
     console.log({state: view.state});
     let steps;
-    while ((steps = sendableSteps(view.state))) {
+    while (true) {
+        const unlock = await mutex.lock();
+        steps = sendableSteps(view.state);
         console.log({steps});
         console.log("sending...\n");
         try {
             const res = await axios.post(`http://${addr}/update`, {fileName, ...steps});
-            console.log("...sent\n");
+            if (res.status === 200) {
+                console.log("...sent\n");
+                console.log({res});
+                if (res.data) {
+                    applySteps(res.data)
+                }
+            }
+        } catch {
+        }
+        unlock()
+    }
+}
+
+async function pull() {
+    if (!view) {
+        fileName = Url(window.location.href, null, true).query.name;
+        view = await newView()
+    }
+    const unlock = await mutex.lock();
+    try {
+        const res = await axios.get(`http://${addr}/?name=${fileName}&version=${getVersion(view.state)}`);
+        if (res.status === 200) {
             console.log({res});
             if (res.data) {
                 applySteps(res.data)
             }
-        } catch {
+            updateDisplay(fileName);
         }
-    }
-    unlock()
-}
-
-async function pull() {
-    const unlock = await mutex.lock();
-    try {
-        const res = await axios.get(`http://${addr}/?name=${fileName}&version=${getVersion(view.state)}`);
-        console.log({res});
-        if (res.data) {
-            if (!view) {
-                fileName = Url(window.location.href, null, true).query.name;
-                console.log({in: 'pull', fileName});
-                view = await newView()
-            }
-            applySteps(res.data)
-        }
-        updateDisplay(fileName);
     } catch {
     }
     unlock()
@@ -177,7 +184,7 @@ async function pull() {
 async function start() {
     render();
     if (fileName) {
-        pull();
+        await pull();
         createWebSocket(fileName);
     }
 }
