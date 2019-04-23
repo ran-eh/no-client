@@ -157,15 +157,15 @@ async function push() {
 
 async function pull() {
     const unlock = await mutex.lock();
-    if (!view) {
-        fileName = Url(window.location.href, null, true).query.name;
-        console.log({in: 'pull', fileName});
-        view = await newView()
-    }
     try {
         const res = await axios.get(`http://${addr}/?name=${fileName}&version=${getVersion(view.state)}`);
         console.log({res});
         if (res.data) {
+            if (!view) {
+                fileName = Url(window.location.href, null, true).query.name;
+                console.log({in: 'pull', fileName});
+                view = await newView()
+            }
             applySteps(res.data)
         }
         updateDisplay(fileName);
