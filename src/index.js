@@ -1,7 +1,4 @@
 'use strict';
-
-// import applyDevTools from "prosemirror-dev-tools";
-
 import './style.css';
 
 import {schema} from "prosemirror-schema-basic"
@@ -41,6 +38,8 @@ function createWebSocket(name) {
 }
 
 async function newFile() {
+    const unlock = await mutex.lock();
+
     const res = await axios.post(`http://${addr}/new`);
     createWebSocket(res.data.fileName);
     if (view) {
@@ -48,6 +47,8 @@ async function newFile() {
     }
     view = await newView();
     updateDisplay(res.data.fileName);
+    unlock()
+
 }
 
 async function newView() {
@@ -60,10 +61,10 @@ async function newView() {
     console.log({version: getVersion(state), steps: sendableSteps(state)});
     return new EditorView(document.body, {
         state,
-        dispatchTransaction(transaction) {
+        async dispatchTransaction(transaction) {
             let newState = view.state.apply(transaction);
             view.updateState(newState);
-            push()
+            await push()
         }
     });
 }
@@ -94,28 +95,28 @@ function render() {
     newButton.textContent = 'New';
     newButton.onclick = newFile;
 
-    const urlLabel = makeLabel('url', 'File Id')
+    const urlLabel = makeLabel('url', 'File Id');
     urlText = makeRo();
-    const clientIDLabel = makeLabel('url', 'client Id')
+    const clientIDLabel = makeLabel('url', 'client Id');
     clientIDText = makeRo();
-    const versionLabel = makeLabel('url', 'ProseMirror Version')
+    const versionLabel = makeLabel('url', 'ProseMirror Version');
     versionText = makeRo();
 
     document.body.appendChild(newButton);
-    document.body.appendChild(document.createElement('br'))
+    document.body.appendChild(document.createElement('br'));
     document.body.appendChild(urlLabel);
     document.body.appendChild(urlText);
-    document.body.appendChild(document.createTextNode('\u00A0\u00A0'))
+    document.body.appendChild(document.createTextNode('\u00A0\u00A0'));
     document.body.appendChild(clientIDLabel);
     document.body.appendChild(clientIDText);
-    document.body.appendChild(document.createTextNode('\u00A0\u00A0'))
+    document.body.appendChild(document.createTextNode('\u00A0\u00A0'));
     document.body.appendChild(versionLabel);
     document.body.appendChild(versionText);
 }
 
 function updateDisplay(name) {
     fileName = name;
-    clientIDText.setAttribute('value', view.state.config.pluginsByKey.collab$.spec.config.clientID
+    clientIDText.setAttribute('value', view.state.config.pluginsByKey['collab$'].spec.config.clientID
     );
     urlText.setAttribute('value', fileName);
     versionText.setAttribute('value', getVersion(view.state));
@@ -158,7 +159,7 @@ async function pull() {
     const unlock = await mutex.lock();
     if (!view) {
         fileName = Url(window.location.href, null, true).query.name;
-        console.log({in: 'pull', fileName})
+        console.log({in: 'pull', fileName});
         view = await newView()
     }
     try {
@@ -173,12 +174,13 @@ async function pull() {
     unlock()
 }
 
-async function init() {
+async function start() {
     render();
     if (fileName) {
-        await pull();
+        pull();
         createWebSocket(fileName);
     }
 }
-init();
+
+start();
 
