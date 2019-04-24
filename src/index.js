@@ -144,20 +144,25 @@ async function push() {
     while (true) {
         const unlock = await mutex.lock();
         steps = sendableSteps(view.state);
-        console.log({steps});
-        console.log("sending...\n");
-        try {
-            const res = await axios.post(`http://${addr}/update`, {fileName, ...steps});
-            if (res.status === 200) {
-                console.log("...sent\n");
-                console.log({res});
-                if (res.data) {
-                    applySteps(res.data)
+        if (steps) {
+            console.log({steps});
+            console.log("sending...\n");
+            try {
+                const res = await axios.post(`http://${addr}/update`, {fileName, ...steps});
+                if (res.status === 200) {
+                    console.log("...sent\n");
+                    console.log({res});
+                    if (res.data) {
+                        applySteps(res.data)
+                    }
                 }
+            } catch {
             }
-        } catch {
         }
         unlock()
+        if (!steps) {
+            break;
+        }
     }
 }
 
