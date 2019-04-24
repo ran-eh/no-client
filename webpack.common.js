@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
     entry: {
         polyfill: 'babel-polyfill',
         app: './src/index.js'
@@ -66,8 +65,4 @@ module.exports = {
     stats: {
         colors: true
     },
-    devtool: 'inline-source-map',
-    devServer: {
-        contentBase: './dist'
-    }
 };
